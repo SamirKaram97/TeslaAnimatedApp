@@ -9,9 +9,11 @@ class TeslaBottomNavBar extends StatelessWidget {
     super.key,
     required this.bottomNavIcons,
     required this.selectedNavIndex,
+    required this.animationController,
   });
 
   final List<String> bottomNavIcons;
+  final AnimationController animationController;
   final int selectedNavIndex;
 
   @override
@@ -28,6 +30,11 @@ class TeslaBottomNavBar extends StatelessWidget {
                     bottomNavIcons[index]),
                 label: "")),
         onTap: (value) {
+          if(value ==1)
+            {
+              animationController.forward();}
+          else if(value!=1&&HomeCubit.get(context).selectedBottomNavBar==1)
+            {animationController.reverse(from: 0.7);}
           HomeCubit.get(context).changeBottomNavBar(value);
         },
         backgroundColor: Colors.black,
