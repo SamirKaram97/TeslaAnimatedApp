@@ -1,16 +1,10 @@
-# tesla
+# Animated Tesla App Conect using Flutter
 
-A new Flutter project.
+in this app users can unlock any door, check battery status also control the air cooler temperature and check the psi of the tires.
 
-## Getting Started
+In this hole tutorial, we will cover how to use ImplicitlyAnimatedWidge and how to use multiple AnimationController on AnimatedBuil
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+![Preview](/gif.gif)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![App UI](/ui.png)
