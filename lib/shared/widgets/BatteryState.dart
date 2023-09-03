@@ -36,7 +36,7 @@ class BatteryState extends StatelessWidget {
             "18 min remaining",
             style: TextStyle(fontSize: 20),
           ),
-          SizedBox(height: constraints.maxHeight * 0.14),
+          SizedBox(height: constraints.maxHeight * 0.15),
           const DefaultTextStyle(
               style: TextStyle(
                 fontSize: 18,

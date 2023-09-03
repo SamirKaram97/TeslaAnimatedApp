@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tesla/models/temp_info_model.dart';
+import 'package:tesla/models/tyre_info_model.dart';
 import 'package:tesla/screens/home/cubit/home_states.dart';
 import 'package:tesla/shared/constants.dart';
 import 'package:tesla/shared/styles/assets.dart';
 import 'package:tesla/shared/styles/colors.dart';
-import 'package:tesla/shared/widgets/DoorLock.dart';
 
 import '../../shared/widgets/BatteryState.dart';
+import '../../shared/widgets/DoorLockStack.dart';
+import '../../shared/widgets/PositionedCar.dart';
+import '../../shared/widgets/TempDetails.dart';
+import '../../shared/widgets/TempSwitcherBtn.dart';
 import '../../shared/widgets/TeslaBottomNavBar.dart';
+import '../../shared/widgets/TyreCard.dart';
+import '../../shared/widgets/TyresStack.dart';
 import 'cubit/home_cubit.dart';
+import 'package:tesla/models/tyre_info_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,32 +26,47 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with TickerProviderStateMixin {
-  final List<String> bottomNavIcons = const [
-    Assets.lock,
-    Assets.charge,
-    Assets.temp,
-    Assets.tyre
-  ];
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late AnimationController batteryAnimatedController;
   late Animation<double> batteryAnimation;
-  late AnimationController batteryStateController;
   late Animation<double> batterStateAnimation;
-
-
-
-
+  late AnimationController tempAnimatedController;
+  late AnimationController tyresAnimatedController;
+  late Animation<double> shiftCarAnimation;
+  late Animation<double> glowAnimation;
+  late Animation<double> detailsAnimation;
+  late Animation<double> tyresOpacityAnimation;
+  late Animation<double> highTyresAnimation;
+  late Animation<double> lowTyresAnimation;
 
   void initAnimation() {
+    //battery
     batteryAnimatedController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 600));
+        vsync: this, duration: const Duration(milliseconds: 1000));
     batteryAnimation = CurvedAnimation(
-        parent: batteryAnimatedController, curve: const Interval(0, 0.5));
-    batteryStateController= AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 600));
-    batterStateAnimation=CurvedAnimation(
-        parent: batteryAnimatedController, curve: const Interval(0.6, 1));
+        parent: batteryAnimatedController, curve: const Interval(0.4, 0.6));
+    batterStateAnimation = CurvedAnimation(
+        parent: batteryAnimatedController, curve: const Interval(0.7, 1));
+
+    //temp
+    tempAnimatedController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 2000));
+    shiftCarAnimation = CurvedAnimation(
+        parent: tempAnimatedController, curve: const Interval(0.15, 0.4));
+    detailsAnimation = CurvedAnimation(
+        parent: tempAnimatedController, curve: const Interval(0.45, 0.6));
+    glowAnimation = CurvedAnimation(
+        parent: tempAnimatedController, curve: const Interval(0.6, 0.8));
+
+    //tyres
+    tyresAnimatedController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 2000));
+    tyresOpacityAnimation = CurvedAnimation(
+        parent: tyresAnimatedController, curve: const Interval(0.4, 0.5));
+    highTyresAnimation = CurvedAnimation(
+        parent: tyresAnimatedController, curve: const Interval(0.6, 0.8));
+    lowTyresAnimation = CurvedAnimation(
+        parent: tyresAnimatedController, curve: const Interval(0.8,0.9));
   }
 
   @override
@@ -51,7 +74,6 @@ class _HomeScreenState extends State<HomeScreen>
     initAnimation();
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -61,7 +83,11 @@ class _HomeScreenState extends State<HomeScreen>
         builder: (context, state) {
           var homeCubit = HomeCubit.get(context);
           return AnimatedBuilder(
-            animation: Listenable.merge([batteryAnimatedController,batteryStateController]),
+            animation: Listenable.merge([
+              batteryAnimatedController,
+              tempAnimatedController,
+              tyresAnimatedController
+            ]),
             builder: (context, child) => Scaffold(
               body: SafeArea(
                 child: LayoutBuilder(
@@ -73,99 +99,79 @@ class _HomeScreenState extends State<HomeScreen>
                           height: constraints.maxHeight,
                           width: constraints.maxWidth,
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: constraints.maxHeight * 0.1),
-                          child: SvgPicture.asset(
-                            Assets.car,
-                            width: double.infinity,
-                          ),
+                        PositionedCar(
+                            shiftCarAnimation: shiftCarAnimation,
+                            constraints: constraints),
+                          DoorLockStack(
+                          constraints: constraints,
                         ),
-                        AnimatedPositioned(
-                          right: homeCubit.selectedBottomNavBar == 0
-                              ? constraints.maxWidth * 0.05
-                              : constraints.maxWidth / 2,
-                          duration: Constants.defaultDuration,
-                          child: AnimatedOpacity(
-                            duration: Constants.defaultDuration,
-                            opacity:
-                                homeCubit.selectedBottomNavBar != 0 ? 0 : 1,
-                            child: DoorLock(
-                              onTap: () => homeCubit.changeDoorLockState('r'),
-                              isOpened: homeCubit.doors['r']!,
+                        if(homeCubit.selectedBottomNavBar==1)
+                          ...[Opacity(
+                            opacity: batteryAnimation.value,
+                            child: SvgPicture.asset(
+                              Assets.battery,
+                              width: constraints.maxWidth / 2,
+
                             ),
                           ),
-                        ),
-                        AnimatedPositioned(
-                          left: homeCubit.selectedBottomNavBar == 0
-                              ? constraints.maxWidth * 0.05
-                              : constraints.maxWidth / 2,
-                          duration: Constants.defaultDuration,
-                          child: AnimatedOpacity(
-                            duration: Constants.defaultDuration,
-                            opacity:
-                                homeCubit.selectedBottomNavBar != 0 ? 0 : 1,
-                            child: DoorLock(
-                              onTap: () => homeCubit.changeDoorLockState('l'),
-                              isOpened: homeCubit.doors['l']!,
+                            Positioned(
+                              width: constraints.maxWidth,
+                              height: constraints.maxHeight,
+                              top: 50 * (1 - batterStateAnimation.value),
+                              child: Opacity(
+                                  opacity: batterStateAnimation.value,
+                                  child: BatteryState(
+                                    constraints: constraints,
+                                  )),
+                            ),],
+                        if(homeCubit.selectedBottomNavBar==2)
+                          ...[Positioned(
+                            right: -180 * (1 - glowAnimation.value),
+                            child: homeCubit.isCool
+                                ? Image.asset(
+                              key: UniqueKey(),
+                              Assets.coolGlow,
+                              height: constraints.maxHeight,
+                            )
+                                : Image.asset(
+                              key: UniqueKey(),
+                              Assets.hotGlow,
+                              height: constraints.maxHeight,
                             ),
                           ),
-                        ),
-                        AnimatedPositioned(
-                          top: homeCubit.selectedBottomNavBar == 0
-                              ? constraints.maxHeight * 0.15
-                              : constraints.maxHeight / 2,
-                          duration: Constants.defaultDuration,
-                          child: AnimatedOpacity(
-                            duration: Constants.defaultDuration,
-                            opacity:
-                                homeCubit.selectedBottomNavBar != 0 ? 0 : 1,
-                            child: DoorLock(
-                              onTap: () => homeCubit.changeDoorLockState('t'),
-                              isOpened: homeCubit.doors['t']!,
-                            ),
-                          ),
-                        ),
-                        AnimatedPositioned(
-                          bottom: homeCubit.selectedBottomNavBar == 0
-                              ? constraints.maxHeight * 0.15
-                              : constraints.maxHeight / 2,
-                          duration: Constants.defaultDuration,
-                          child: AnimatedOpacity(
-                            duration: Constants.defaultDuration,
-                            opacity:
-                                homeCubit.selectedBottomNavBar != 0 ? 0 : 1,
-                            child: DoorLock(
-                              onTap: () => homeCubit.changeDoorLockState('b'),
-                              isOpened: homeCubit.doors['b']!,
-                            ),
-                          ),
-                        ),
-                        Opacity(
-                          opacity: batteryAnimatedController.value,
-                          child: SvgPicture.asset(
-                            Assets.battery,
-                            width: constraints.maxWidth / 2,
-                          ),
-                        ),
-                        Positioned(
-                          width: constraints.maxWidth,
-                          height: constraints.maxHeight,
-                          top: 50*(1-batterStateAnimation.value),
-                          child: Opacity(
-                            opacity: batterStateAnimation.value,
-                              child: BatteryState(
-                            constraints: constraints,
-                          )),
-                        )
+                            Positioned(
+                              top: 100 * (1 - detailsAnimation.value),
+                              height: constraints.maxHeight,
+                              width: constraints.maxWidth,
+                              child: Opacity(
+                                opacity: detailsAnimation.value,
+                                child: TempDetails(model: tempInfoModel),
+                              ),
+                            ),],
+                        if(homeCubit.isTyresCurrentPage)...[Opacity(
+                            opacity: tyresOpacityAnimation.value,
+                            child: const TyresStack()),
+                          GridView.builder(
+                            physics:const  NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                            SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisSpacing: Constants.defaultPadding,
+                                mainAxisSpacing: Constants.defaultPadding,
+                                crossAxisCount: 2,
+                                childAspectRatio: constraints.maxWidth /
+                                    constraints.maxHeight),
+                            itemCount: 4,
+                            itemBuilder: (context, index) => Opacity(opacity: tyresInfo[index].isLow?lowTyresAnimation.value:highTyresAnimation.value,child: TyreCard(model: tyresInfo[index],index: index,)),
+                          )]
                       ],
                     );
                   },
                 ),
               ),
               bottomNavigationBar: TeslaBottomNavBar(
-                  animationController: batteryAnimatedController,
-                  bottomNavIcons: bottomNavIcons,
+                  carAnimationController: tempAnimatedController,
+                  tyreAnimationController: tyresAnimatedController,
+                  batteryAnimationController: batteryAnimatedController,
                   selectedNavIndex: homeCubit.selectedBottomNavBar),
             ),
           );
@@ -174,5 +180,4 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
-
 
