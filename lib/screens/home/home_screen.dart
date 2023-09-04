@@ -92,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               body: SafeArea(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
+                    print(constraints.maxWidth);
                     return Stack(
                       alignment: AlignmentDirectional.center,
                       children: [
@@ -100,6 +101,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           width: constraints.maxWidth,
                         ),
                         PositionedCar(
+                          tyresOpacityAnimation: tyresOpacityAnimation,
                             shiftCarAnimation: shiftCarAnimation,
                             constraints: constraints),
                           DoorLockStack(
@@ -127,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         if(homeCubit.selectedBottomNavBar==2)
                           ...[Positioned(
                             right: -180 * (1 - glowAnimation.value),
-                            child: homeCubit.isCool
+                            child: tempInfoModel.isCool
                                 ? Image.asset(
                               key: UniqueKey(),
                               Assets.coolGlow,
@@ -148,9 +150,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 child: TempDetails(model: tempInfoModel),
                               ),
                             ),],
-                        if(homeCubit.isTyresCurrentPage)...[Opacity(
-                            opacity: tyresOpacityAnimation.value,
-                            child: const TyresStack()),
+                        if(homeCubit.isTyresCurrentPage)...[
                           GridView.builder(
                             physics:const  NeverScrollableScrollPhysics(),
                             gridDelegate:
