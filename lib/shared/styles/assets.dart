@@ -13,4 +13,5 @@ class Assets
   static const String doorUnlock='assets/icons/door_unlock.svg';
   static const String coolGlow='assets/images/Cool_glow_2.png';
   static const String hotGlow='assets/images/Hot_glow_4.png';
+  static const String teslaLogo='assets/images/telsa_logo.jpg';
 }
