@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tesla/shared/network/end_points.dart';
 
 import '../../screens/home/cubit/home_cubit.dart';
 import '../constants.dart';
@@ -27,8 +28,8 @@ class DoorLockStack extends StatelessWidget {
             opacity:
                 homeCubit.selectedBottomNavBar != 0 ? 0 : 1,
             child: DoorLock(
-              onTap: () => HomeCubit.get(context).selectedBottomNavBar==0?homeCubit.changeDoorLockState('r'):null,
-              isOpened: homeCubit.doors['r']!,
+              onTap: () => HomeCubit.get(context).selectedBottomNavBar==0?homeCubit.changeDoorLockState(DoorDirection.right):null,
+              isOpened: homeCubit.doorsStatus?[DoorDirection.right.value]??false,
             ),
           ),
         ),
@@ -42,8 +43,8 @@ class DoorLockStack extends StatelessWidget {
             opacity:
             homeCubit.selectedBottomNavBar != 0 ? 0 : 1,
             child: DoorLock(
-              onTap: () => HomeCubit.get(context).selectedBottomNavBar==0?homeCubit.changeDoorLockState('l'):null,
-              isOpened: homeCubit.doors['l']!,
+              onTap: () => HomeCubit.get(context).selectedBottomNavBar==0?homeCubit.changeDoorLockState(DoorDirection.left):null,
+              isOpened: homeCubit.doorsStatus?[DoorDirection.left.value]??false,
             ),
           ),
         ),
@@ -57,8 +58,8 @@ class DoorLockStack extends StatelessWidget {
             opacity:
             homeCubit.selectedBottomNavBar != 0 ? 0 : 1,
             child: DoorLock(
-              onTap: () => HomeCubit.get(context).selectedBottomNavBar==0?homeCubit.changeDoorLockState('t'):null,
-              isOpened: homeCubit.doors['t']!,
+              onTap: () => HomeCubit.get(context).selectedBottomNavBar==0?homeCubit.changeDoorLockState(DoorDirection.front):null,
+              isOpened: homeCubit.doorsStatus?[DoorDirection.front.value]??false,
             ),
           ),
         ),
@@ -72,8 +73,8 @@ class DoorLockStack extends StatelessWidget {
             opacity:
             homeCubit.selectedBottomNavBar != 0 ? 0 : 1,
             child: DoorLock(
-              onTap: () => HomeCubit.get(context).selectedBottomNavBar==0?homeCubit.changeDoorLockState('b'):null,
-              isOpened: homeCubit.doors['b']!,
+              onTap: () => HomeCubit.get(context).selectedBottomNavBar==0?homeCubit.changeDoorLockState(DoorDirection.back):null,
+              isOpened: homeCubit.doorsStatus?[DoorDirection.back.value]??false,
             ),
           ),
         ),

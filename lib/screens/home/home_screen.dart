@@ -5,6 +5,7 @@ import 'package:tesla/models/temp_info_model.dart';
 import 'package:tesla/models/tyre_info_model.dart';
 import 'package:tesla/screens/home/cubit/home_states.dart';
 import 'package:tesla/shared/constants.dart';
+import 'package:tesla/shared/network/dio_helper.dart';
 import 'package:tesla/shared/styles/assets.dart';
 import 'package:tesla/shared/styles/colors.dart';
 
@@ -77,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomeCubit(),
+      create: (context) => HomeCubit()..getDoorsStatues(),
       child: BlocConsumer<HomeCubit, HomeState>(
         listener: (context, state) {},
         builder: (context, state) {

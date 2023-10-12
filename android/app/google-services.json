@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "73284443025",
+    "firebase_url": "https://tesla-1657f-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "tesla-1657f",
+    "storage_bucket": "tesla-1657f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:73284443025:android:a6e67b913d02f5957f1830",
+        "android_client_info": {
+          "package_name": "com.example.tesla"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGdjA-ytBpNXFsBnCeymESmAFyJW4PjGU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
