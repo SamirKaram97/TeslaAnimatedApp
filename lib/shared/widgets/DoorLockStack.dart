@@ -29,7 +29,7 @@ class DoorLockStack extends StatelessWidget {
                 homeCubit.selectedBottomNavBar != 0 ? 0 : 1,
             child: DoorLock(
               onTap: () => HomeCubit.get(context).selectedBottomNavBar==0?homeCubit.changeDoorLockState(DoorDirection.right):null,
-              isOpened: homeCubit.doorsStatus?[DoorDirection.right.value]??false,
+              isOpened: homeCubit.doorsStatus?[DoorDirection.right.value],
             ),
           ),
         ),
@@ -44,7 +44,7 @@ class DoorLockStack extends StatelessWidget {
             homeCubit.selectedBottomNavBar != 0 ? 0 : 1,
             child: DoorLock(
               onTap: () => HomeCubit.get(context).selectedBottomNavBar==0?homeCubit.changeDoorLockState(DoorDirection.left):null,
-              isOpened: homeCubit.doorsStatus?[DoorDirection.left.value]??false,
+              isOpened: homeCubit.doorsStatus?[DoorDirection.left.value],
             ),
           ),
         ),
@@ -59,7 +59,7 @@ class DoorLockStack extends StatelessWidget {
             homeCubit.selectedBottomNavBar != 0 ? 0 : 1,
             child: DoorLock(
               onTap: () => HomeCubit.get(context).selectedBottomNavBar==0?homeCubit.changeDoorLockState(DoorDirection.front):null,
-              isOpened: homeCubit.doorsStatus?[DoorDirection.front.value]??false,
+              isOpened: homeCubit.doorsStatus?[DoorDirection.front.value],
             ),
           ),
         ),
@@ -74,7 +74,7 @@ class DoorLockStack extends StatelessWidget {
             homeCubit.selectedBottomNavBar != 0 ? 0 : 1,
             child: DoorLock(
               onTap: () => HomeCubit.get(context).selectedBottomNavBar==0?homeCubit.changeDoorLockState(DoorDirection.back):null,
-              isOpened: homeCubit.doorsStatus?[DoorDirection.back.value]??false,
+              isOpened: homeCubit.doorsStatus?[DoorDirection.back.value],
             ),
           ),
         ),

@@ -4,10 +4,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tesla/models/temp_info_model.dart';
 import 'package:tesla/models/tyre_info_model.dart';
 import 'package:tesla/screens/home/cubit/home_states.dart';
+import 'package:tesla/shared/componnets/toast.dart';
 import 'package:tesla/shared/constants.dart';
 import 'package:tesla/shared/network/dio_helper.dart';
 import 'package:tesla/shared/styles/assets.dart';
 import 'package:tesla/shared/styles/colors.dart';
+import 'package:tesla/shared/styles/strings.dart';
 
 import '../../shared/widgets/BatteryState.dart';
 import '../../shared/widgets/DoorLockStack.dart';
@@ -70,6 +72,34 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         parent: tyresAnimatedController, curve: const Interval(0.8,0.9));
   }
 
+  bool isErrorState(HomeState state)
+  {
+    if(state is GetDoorsStatusError ||state is GetBatteryInfoErrorState||state is GetTempInfoErrorState||state is GetTiresInfoErrorState) {
+      return true;
+    }
+    return false;
+  }
+
+  TireModel? getTireModel(int index,TiresInfoModel tiresInfoModel)
+  {
+    if(index==0)
+      {
+        return tiresInfoModel.frontLeftTireModel;
+      }
+    else if(index==1)
+    {
+      return tiresInfoModel.frontRightTireModel;
+    }
+    else if(index==2)
+    {
+      return tiresInfoModel.backLeftTireModel;
+    }
+    else if(index==3)
+    {
+      return tiresInfoModel.backRightTireModel;
+    }
+  }
+
   @override
   void initState() {
     initAnimation();
@@ -78,9 +108,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomeCubit()..getDoorsStatues(),
+      create: (context) => HomeCubit()..initConnection()..getDoorsStatues()..getBatteryInfo()..getTempInfo()..getTiresInfo(),
       child: BlocConsumer<HomeCubit, HomeState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if(isErrorState(state))
+            {
+              print(state.message);
+              showToast(state: ToastState.EROOR, text: state.message!);
+            }
+          else if(state is ChangeInternetState)
+            {
+              if(HomeCubit.get(context).connected==true) {
+                showToast(state: ToastState.SUCCESS, text: Strings.connectedToInternet);
+              } else
+                {
+                  showToast(state: ToastState.EROOR, text: Strings.noInternet);
+                }
+            }
+        },
         builder: (context, state) {
           var homeCubit = HomeCubit.get(context);
           return AnimatedBuilder(
@@ -105,10 +150,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           tyresOpacityAnimation: tyresOpacityAnimation,
                             shiftCarAnimation: shiftCarAnimation,
                             constraints: constraints),
-                          DoorLockStack(
+                         if(homeCubit.connected!=false)DoorLockStack(
                           constraints: constraints,
                         ),
-                        if(homeCubit.selectedBottomNavBar==1)
+                        if(homeCubit.selectedBottomNavBar==1&&homeCubit.batteryInfoModel!=null)
                           ...[Opacity(
                             opacity: batteryAnimation.value,
                             child: SvgPicture.asset(
@@ -117,20 +162,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                             ),
                           ),
-                            Positioned(
+                            if(homeCubit.batteryInfoModel!=null)Positioned(
                               width: constraints.maxWidth,
                               height: constraints.maxHeight,
                               top: 50 * (1 - batterStateAnimation.value),
                               child: Opacity(
                                   opacity: batterStateAnimation.value,
                                   child: BatteryState(
+                                    batteryInfoModel: homeCubit.batteryInfoModel!,
                                     constraints: constraints,
                                   )),
                             ),],
-                        if(homeCubit.selectedBottomNavBar==2)
+                        if(homeCubit.selectedBottomNavBar==2&&homeCubit.tempInfoModel!=null)
                           ...[Positioned(
                             right: -180 * (1 - glowAnimation.value),
-                            child: tempInfoModel.isCool
+                            child: homeCubit.tempInfoModel!.isCool
                                 ? Image.asset(
                               key: UniqueKey(),
                               Assets.coolGlow,
@@ -148,11 +194,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               width: constraints.maxWidth,
                               child: Opacity(
                                 opacity: detailsAnimation.value,
-                                child: TempDetails(model: tempInfoModel),
+                                child: TempDetails(model: homeCubit.tempInfoModel!),
                               ),
                             ),],
-                        if(homeCubit.isTyresCurrentPage)...[
-                          GridView.builder(
+                        if(homeCubit.isTyresCurrentPage&&homeCubit.tiresInfoModel!=null)...[
+                         GridView.builder(
                             physics:const  NeverScrollableScrollPhysics(),
                             gridDelegate:
                             SliverGridDelegateWithFixedCrossAxisCount(
@@ -162,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 childAspectRatio: constraints.maxWidth /
                                     constraints.maxHeight),
                             itemCount: 4,
-                            itemBuilder: (context, index) => Opacity(opacity: tyresInfo[index].isLow?lowTyresAnimation.value:highTyresAnimation.value,child: TyreCard(model: tyresInfo[index],index: index,)),
+                            itemBuilder: (context, index) => Opacity(opacity: getTireModel(index, homeCubit.tiresInfoModel!)!.isLow!?lowTyresAnimation.value:highTyresAnimation.value,child: TyreCard(model: getTireModel(index, homeCubit.tiresInfoModel!)!,index: index,)),
                           )]
                       ],
                     );

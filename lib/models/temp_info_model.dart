@@ -19,5 +19,3 @@ class TempInfoModel
   }
 }
 
-
-TempInfoModel tempInfoModel=TempInfoModel(tempDegree: 26, insideTempDegree: 26, outsideTempDegree: 30, isCool: true);

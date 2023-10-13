@@ -10,20 +10,20 @@ class TyreCard extends StatelessWidget {
     super.key, required this.model, required this.index,
   });
 
-  final TyreInfoModel model;
+  final TireModel model;
   final int index;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: model.isLow?AppColors.white10:AppColors.redColor.withOpacity(.1),
+          color: model?.isLow??false?AppColors.white10:AppColors.redColor.withOpacity(.1),
           borderRadius: BorderRadius.circular(5),
           border:
-              Border.all(color: model.isLow?AppColors.primaryColor:AppColors.redColor)),
+              Border.all(color: model?.isLow??false?AppColors.primaryColor:AppColors.redColor)),
       child: Padding(
         padding: const EdgeInsets.all(15),
-        child: index>2?Column(
+        child: index>1?Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             RichText(
@@ -40,7 +40,7 @@ class TyreCard extends StatelessWidget {
             const SizedBox(height: Constants.defaultPadding,),
             Text("${model.tempDegree}\u2103",style: const TextStyle(fontSize: 18,color: AppColors.white45),),
             const Spacer(),
-            Text(model.isLow?"low".toUpperCase():"high".toUpperCase(),style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 50),),
+            Text(model?.isLow??false?"low".toUpperCase():"high".toUpperCase(),style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 50),),
             Text("pressure".toUpperCase(),style: const TextStyle(color: AppColors.white45,fontSize: 22),),
 
 
@@ -48,7 +48,7 @@ class TyreCard extends StatelessWidget {
         ):Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(model.isLow?"low".toUpperCase():"high".toUpperCase(),style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 50),),
+            Text(model?.isLow??false?"low".toUpperCase():"high".toUpperCase(),style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 50),),
             Text("pressure".toUpperCase(),style: const TextStyle(color: AppColors.white45,fontSize: 22),),
             const Spacer(),
             RichText(

@@ -19,7 +19,7 @@ class TempSwitcherBtn extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         HomeCubit.get(context).coolHeatSwitcher();
-        print(tempInfoModel.isCool);
+
       },
       child: Column(
         children: [

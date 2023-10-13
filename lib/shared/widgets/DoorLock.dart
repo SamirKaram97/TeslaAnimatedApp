@@ -7,7 +7,7 @@ class DoorLock extends StatefulWidget {
   DoorLock({super.key, required this.onTap, required this.isOpened});
 
   void Function() onTap;
-  final bool isOpened;
+  final bool? isOpened;
 
   @override
   State<DoorLock> createState() => _DoorLockState();
@@ -27,8 +27,9 @@ class _DoorLockState extends State<DoorLock> with TickerProviderStateMixin {
               child: child,
             ),
             duration: Constants.defaultDuration,
-            child: widget.isOpened
-                ? SvgPicture.asset(
+            child: widget.isOpened==null?
+                const CircularProgressIndicator():
+                widget.isOpened==true? SvgPicture.asset(
               Assets.doorUnlock,
               key: const Key(Assets.doorUnlock),
             )

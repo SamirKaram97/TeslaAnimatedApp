@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:tesla/models/battery_info_model.dart';
 
 import '../constants.dart';
 
 class BatteryState extends StatelessWidget {
   const BatteryState({
     super.key,
-    required this.constraints,
+    required this.constraints, required this.batteryInfoModel,
   });
 
   final BoxConstraints constraints;
+  final BatteryInfoModel batteryInfoModel;
 
   @override
   Widget build(BuildContext context) {
@@ -17,24 +19,24 @@ class BatteryState extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            "220 mi",
+            "${batteryInfoModel.miles} mi",
             style: Theme.of(context)
                 .textTheme
                 .displaySmall!
                 .copyWith(color: Colors.white),
           ),
-          const Text(
-            "62%",
+           Text(
+            "${batteryInfoModel.batteryPercentage}%",
             style: TextStyle(fontSize: 24),
           ),
           const Spacer(),
           Text(
-            "Charging".toUpperCase(),
+              batteryInfoModel.isCharging!?"Charging".toUpperCase():"",
             style: const TextStyle(fontSize: 20),
           ),
-          const Text(
-            "18 min remaining",
-            style: TextStyle(fontSize: 20),
+           Text(
+            "${batteryInfoModel.rTime} min remaining",
+            style: const TextStyle(fontSize: 20),
           ),
           SizedBox(height: constraints.maxHeight * 0.15),
           const DefaultTextStyle(
